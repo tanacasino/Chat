@@ -10,6 +10,8 @@ import UIKit
 import Firebase
 
 @UIApplicationMain
+
+// TODO: GIDSignInDelegateプロトコルに適合していることを宣言する
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
@@ -18,6 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FIRApp.configure()
+        
+        // TODO: GIDSignInインスタンスの初期設定を行う
+        
         return true
     }
 
@@ -43,6 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
+    // TODO: URLスキームをハンドルする処理を実装
+    
+    // TODO: Firebaseにログインする処理を実装
 }
 
