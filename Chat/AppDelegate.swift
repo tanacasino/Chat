@@ -10,9 +10,7 @@ import UIKit
 import Firebase
 
 @UIApplicationMain
-
-// TODO: GIDSignInDelegateプロトコルに適合していることを宣言する
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
 
@@ -21,7 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         FIRApp.configure()
         
-        // TODO: GIDSignInインスタンスの初期設定を行う
+        GIDSignIn.sharedInstance().clientID = FIRApp.defaultApp()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
         
         return true
     }
@@ -49,7 +48,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // TODO: URLスキームをハンドルする処理を実装
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance().handle(
+            url,
+            sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
+            annotation: options[UIApplicationOpenURLOptionsKey.annotation]
+        )
+    }
     
     // TODO: Firebaseにログインする処理を実装
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        if let error = error {
+            print(error.localizedDescription)
+            return
+        }
+        
+        guard let authentication = user.authentication else {
+            print("Authentication is nil")
+            return
+        }
+        
+        let credential = FIRGoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+        FIRAuth.auth()?.signIn(with: credential, completion: { (user, error) in
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                print("Login success: \(user?.uid ?? "")")
+            }
+        })
+    }
 }
 
